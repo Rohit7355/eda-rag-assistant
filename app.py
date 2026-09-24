@@ -1,21 +1,21 @@
-from langchain_community.document_loaders import DirectoryLoader, TextLoader, PyPDFLoader
+from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
-import os
+#import os
 from dotenv import load_dotenv
 load_dotenv()
 
 # Load documents
 print("Loading documents...")
 # Load txt files
-txt_loader = DirectoryLoader("data/", glob="**/*.txt", loader_cls=TextLoader)
+#txt_loader = DirectoryLoader("data/", glob="**/*.txt", loader_cls=TextLoader)
 # Load PDFs
-pdf_loader = DirectoryLoader("data/", glob="**/*.pdf", loader_cls=PyPDFLoader)
+pdf_loader = PyPDFLoader("T20I_rules.pdf")
 
-documents = txt_loader.load() + pdf_loader.load()
+documents = pdf_loader.load()
 
 # Split into chunks
 print("Splitting documents...")
@@ -30,9 +30,9 @@ vectorstore = Chroma.from_documents(chunks, embeddings, persist_directory="./chr
 # Set up LLM and QA chain
 print("Setting up LLM...")
 llm = ChatGroq(
-    model="llama-3.1-8b-instant",  
-    api_key=os.getenv("GROQ_API_KEY")
-)
+    model="openai/gpt-oss-120b" ) 
+    #api_key=os.getenv("GROQ_API_KEY")
+
 
 prompt = ChatPromptTemplate.from_template("""
 You are an expert assistant.
